@@ -19,8 +19,10 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
 
-  let joinMessage = `${chatBot}: User with id: ${socket.id} has joined the chat`;
-  socket.broadcast.emit("user_joined", joinMessage)
+  socket.on("join_room", (data) => {
+    socket.join(data.room)
+    socket.to(data.room).emit("user_joined_message", `${data.username} has joined this room`);
+  })
 
   socket.on("send_message", (message) => {
     io.emit("receive_message", message);
