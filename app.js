@@ -21,7 +21,7 @@ io.on('connection', (socket) => {
 
   socket.on("join_room", (data) => {
     socket.join(data.room)
-    socket.to(data.room).emit("user_joined_message", `${data.username} has joined this room`);
+    socket.to(data.room).emit("user_joined_message", {username: chatBot, message: `${data.username} has joined the chat`, time: data.time});
   })
 
   socket.on("send_message", (messageData) => {
@@ -29,7 +29,7 @@ io.on('connection', (socket) => {
   })
 
   socket.on("disconnect", () => {
-    io.emit("user_joined", `User with id: ${socket.id} has left the chat`)
+    console.log("User Disconnected", socket.id);
   })
 })
 
