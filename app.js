@@ -24,8 +24,8 @@ io.on('connection', (socket) => {
     socket.to(data.room).emit("user_joined_message", `${data.username} has joined this room`);
   })
 
-  socket.on("send_message", (message) => {
-    io.emit("receive_message", message);
+  socket.on("send_message", (messageData) => {
+    io.emit("receive_message", messageData);
   })
 
   socket.on("disconnect", () => {
