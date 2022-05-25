@@ -9,6 +9,8 @@ const server = http.createServer(app);
 const PORT = 3001;
 const chatBot = "Chat Bot"
 
+const connectedUsers = [];
+
 app.use(cors());
 
 const io = new Server(server, {
@@ -25,7 +27,7 @@ io.on('connection', (socket) => {
   })
 
   socket.on("send_message", (messageData) => {
-    io.emit("receive_message", messageData);
+    socket.to(messageData.room).emit("receive_message", messageData);
   })
 
   socket.on("disconnect", () => {
