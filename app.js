@@ -9,7 +9,10 @@ const server = http.createServer(app);
 const PORT = 3001;
 const chatBot = "Chat Bot"
 
-const connectedUsers = [];
+const connectedUsers = {};
+const getCurrentTime = () => {
+  return `${new Date(Date.now()).getHours()} : ${new Date(Date.now()).getMinutes()}`
+}
 
 app.use(cors());
 
@@ -23,15 +26,37 @@ io.on('connection', (socket) => {
 
   socket.on("join_room", (data) => {
     socket.join(data.room)
+    if(!connectedUsers[`${socket.id}`]) {
+      connectedUsers[`${socket.id}`] = {username: data.username}
+    }
+
     socket.to(data.room).emit("user_joined_message", {username: chatBot, message: `${data.username} has joined the chat`, time: data.time});
   })
 
   socket.on("send_message", (messageData) => {
-    socket.to(messageData.room).emit("receive_message", messageData);
+    io.to(messageData.room).emit("receive_message", messageData);
+  })
+
+  socket.on("disconnecting", () => {
+    let socketId = socket.id;
+    let message = ""
+    
+    if(connectedUsers[`${socketId}`]) {
+      message = `${connectedUsers[`${socketId}`].username} has left`;
+      delete connectedUsers[`${socket.id}`]
+
+      let myRooms = socket.rooms.values();
+
+      for (const s of myRooms){
+        if(s != `${socket.id}`){
+          io.to(s).emit("receive_message", {username: chatBot, message, room: s, time: getCurrentTime()})
+        }
+      }
+    }
   })
 
   socket.on("disconnect", () => {
-    console.log("User Disconnected", socket.id);
+    console.log("User has disconnected")
   })
 })
 
