@@ -2,6 +2,7 @@ const express = require("express");
 const http = require("http");
 const cors = require("cors");
 const { Server } = require("socket.io");
+const moment = require("moment");
 
 const app = express();
 const server = http.createServer(app);
@@ -11,7 +12,7 @@ const chatBot = "Chat Bot"
 
 const connectedUsers = {};
 const getCurrentTime = () => {
-  return `${new Date(Date.now()).getHours()} : ${new Date(Date.now()).getMinutes()}`
+  return moment().format("LT");
 }
 
 app.use(cors());
@@ -30,7 +31,9 @@ io.on('connection', (socket) => {
       connectedUsers[`${socket.id}`] = {username: data.username}
     }
 
-    socket.to(data.room).emit("user_joined_message", {username: chatBot, message: `${data.username} has joined the chat`, time: data.time});
+    socket.emit("welcome_message", {username: chatBot, message: `Hi ${data.username}, welcome to ${data.room} chat room`, room: data.room, time: data.time})
+
+    socket.to(data.room).emit("user_joined_message", {username: chatBot, message: `${data.username} has joined the chat`, room: data.room, time: data.time});
   })
 
   socket.on("send_message", (messageData) => {
