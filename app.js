@@ -6,6 +6,7 @@ const { Server } = require("socket.io");
 const moment = require("moment");
 
 const app = express();
+app.use(cors());
 const server = http.createServer(app);
 
 const chatBot = "Chat Bot"
@@ -15,11 +16,9 @@ const getCurrentTime = () => {
   return moment().format("LT");
 }
 
-app.use(cors());
-
 const io = new Server(server, {
   cors: {
-    options: ["http://localhost:3000"]
+    origin: ["http://localhost:3000"]
   }
 })
 
