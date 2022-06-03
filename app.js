@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const http = require("http");
 const cors = require("cors");
@@ -7,7 +8,6 @@ const moment = require("moment");
 const app = express();
 const server = http.createServer(app);
 
-const PORT = 3001;
 const chatBot = "Chat Bot"
 
 const connectedUsers = {};
@@ -63,6 +63,6 @@ io.on('connection', (socket) => {
   })
 })
 
-server.listen(PORT, () => {
-  console.log("Server is listening on port: " + PORT)
+server.listen(process.env.PORT, () => {
+  console.log("Server is listening on port: " + process.env.PORT)
 })
