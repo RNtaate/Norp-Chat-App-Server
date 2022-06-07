@@ -28,6 +28,8 @@ io.on('connection', (socket) => {
     socket.join(data.room)
     if(!connectedUsers[`${socket.id}`]) {
       connectedUsers[`${socket.id}`] = {username: data.username}
+
+      io.emit("users_connected", {...connectedUsers})
     }
 
     socket.emit("welcome_message", {username: chatBot, message: `Hi ${data.username}, welcome to ${data.room} chat room`, room: data.room, time: data.time})
@@ -54,6 +56,8 @@ io.on('connection', (socket) => {
           io.to(s).emit("receive_message", {username: chatBot, message, room: s, time: getCurrentTime()})
         }
       }
+
+      io.emit("users_connected", {...connectedUsers})
     }
   })
 
