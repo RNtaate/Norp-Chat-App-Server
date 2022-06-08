@@ -41,6 +41,10 @@ io.on('connection', (socket) => {
     io.to(messageData.room).emit("receive_message", messageData);
   })
 
+  socket.on("send_private_message", (messageData) => {
+    socket.to(messageData.to).emit("receive_private_message", messageData);
+  })
+
   socket.on("disconnecting", () => {
     let socketId = socket.id;
     let message = ""
